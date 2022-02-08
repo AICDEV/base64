@@ -5,7 +5,7 @@
  * Simple base64 implementation
  * ./b64 <some_input> to encode
  * ./b64 -d <some_input> to decode
- * 
+ *
  */
 #include <stdlib.h>
 #include <stdio.h>
@@ -24,20 +24,28 @@ static const char b64_table[65] = {
     'o', 'p', 'q', 'r', 's', 't', 'u', 'v',
     'w', 'x', 'y', 'z', '0', '1', '2', '3',
     '4', '5', '6', '7', '8', '9', '+', '/'};
+
+
 void b64_decode(char *t)
 {   
     int c = 2;
-    for (int i = 0; i < strlen(t); i++)
+    for (int i = 0; i < strlen(t);)
     {
         int blocks = 0x0;
-        blocks |= (t[i] == 61) ? 0 : (t[i] > 90) ? ((t[i] % 64) - 7) : ((t[i++] % 64) - 1);
-        blocks <<= 6;
-        blocks |= (t[i] == 61) ? 0 : (t[i] > 90) ? ((t[i] % 64) - 7) : ((t[i++] % 64) - 1);
-        blocks <<= 6;
-        blocks |= (t[i] == 61) ? 0 : (t[i] > 90) ? ((t[i] % 64) - 7) : ((t[i++] % 64) - 1);
-        blocks <<= 6;
-        blocks |= (t[i] == 61) ? 0 : (t[i] > 90) ? ((t[i] % 64) - 7) : ((t[i++] % 64) - 1);
+        blocks |= (t[i] == 61) ? 0 : (t[i] >= 48 && t[i] <= 57) ? ((t[i] % 64) + 4) :  (t[i] > 90) ? ((t[i] % 64) - 7) : ((t[i] % 64) - 1);
+        i++;
 
+        blocks <<= 6;
+        blocks |=  (t[i] == 61) ? 0 : (t[i] >= 48 && t[i] <= 57) ? ((t[i] % 64) + 4) :  (t[i] > 90) ? ((t[i] % 64) - 7) : ((t[i] % 64) - 1);
+        i++;
+
+        blocks <<= 6;
+        blocks |=  (t[i] == 61) ? 0 : (t[i] >= 48 && t[i] <= 57) ? ((t[i] % 64) + 4) :  (t[i] > 90) ? ((t[i] % 64) - 7) : ((t[i] % 64) - 1);
+        i++;
+
+        blocks <<= 6;
+        blocks |=  (t[i] == 61) ? 0 : (t[i] >= 48 && t[i] <= 57) ? ((t[i] % 64) + 4) :  (t[i] > 90) ? ((t[i] % 64) - 7) : ((t[i] % 64) - 1);
+        i++;
 
         while(c >= 0) {
             if((blocks >> (c * 8) & 0xFF) > 0) {
@@ -49,6 +57,7 @@ void b64_decode(char *t)
         c = 2;
     }
 }
+
 
 void b64_encode(char *t, char *r)
 {
@@ -108,8 +117,10 @@ int main(int argc, char *argv[])
         return EXIT_SUCCESS;
     }
 
-    if (argc == 3) {
-        if(strcmp(argv[2], "-d") ) {
+    if (argc == 3)
+    {
+        if (!strcmp(argv[1], "-d"))
+        {
             char *input = argv[2];
             b64_decode(input);
             printf("\n");
