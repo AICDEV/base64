@@ -1,5 +1,5 @@
 # base64
-Simple base64 encod and decode in C. Coded and tested on my ubuntu linux machine with following version:
+Simple base64 encod and decode in C. Coded and tested on my ubuntu linux machine with following versions:
  - gcc version 11.2.0 (Ubuntu 11.2.0-7ubuntu2)
  - ubuntu 21.10 (Impish Indri)
 
