@@ -12,8 +12,8 @@
 #include <string.h>
 #include <sys/types.h>
 
-void b64_decode(char *t);
-void b64_encode(char *t, char *r);
+void b64_decode(char *t, char *r, size_t l);
+void b64_encode(char *t, char *r, size_t l);
 
 static const char b64_table[65] = {
     'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H',
@@ -26,44 +26,47 @@ static const char b64_table[65] = {
     '4', '5', '6', '7', '8', '9', '+', '/'};
 
 
-void b64_decode(char *t)
+void b64_decode(char *t, char *r, size_t l)
 {   
     int c = 2;
-    for (int i = 0; i < strlen(t);)
+    int index = 0;
+    for(int i = 0; i < l; i += 4)
     {
-        int blocks = 0x0;
+        unsigned int blocks = 0x0;
         blocks |= (t[i] == 61) ? 0 : (t[i] >= 48 && t[i] <= 57) ? ((t[i] % 64) + 4) :  (t[i] > 90) ? ((t[i] % 64) - 7) : ((t[i] % 64) - 1);
-        i++;
+
 
         blocks <<= 6;
-        blocks |=  (t[i] == 61) ? 0 : (t[i] >= 48 && t[i] <= 57) ? ((t[i] % 64) + 4) :  (t[i] > 90) ? ((t[i] % 64) - 7) : ((t[i] % 64) - 1);
-        i++;
+        blocks |=  (t[i + 1] == 61) ? 0 : (t[i + 1] >= 48 && t[i + 1] <= 57) ? ((t[i + 1] % 64) + 4) :  (t[i + 1] > 90) ? ((t[i + 1] % 64) - 7) : ((t[i + 1] % 64) - 1);
+
 
         blocks <<= 6;
-        blocks |=  (t[i] == 61) ? 0 : (t[i] >= 48 && t[i] <= 57) ? ((t[i] % 64) + 4) :  (t[i] > 90) ? ((t[i] % 64) - 7) : ((t[i] % 64) - 1);
-        i++;
+        blocks |=  (t[i + 2] == 61) ? 0 : (t[i + 2] >= 48 && t[i + 2] <= 57) ? ((t[i + 2] % 64) + 4) :  (t[i + 2] > 90) ? ((t[i + 2] % 64) - 7) : ((t[i + 2] % 64) - 1);
+
 
         blocks <<= 6;
-        blocks |=  (t[i] == 61) ? 0 : (t[i] >= 48 && t[i] <= 57) ? ((t[i] % 64) + 4) :  (t[i] > 90) ? ((t[i] % 64) - 7) : ((t[i] % 64) - 1);
-        i++;
+        blocks |=  (t[i + 3] == 61) ? 0 : (t[i + 3] >= 48 && t[i + 3] <= 57) ? ((t[i + 3] % 64) + 4) :  (t[i + 3] > 90) ? ((t[i + 3] % 64) - 7) : ((t[i + 3] % 64) - 1);
+
 
         while(c >= 0) {
             if((blocks >> (c * 8) & 0xFF) > 0) {
-                printf("%c", blocks >> (c * 8) & 0xFF);
+                r[index] = blocks >> (c * 8) & 0xFF;
             }
+            index++;
             c--;
         }
 
         c = 2;
     }
+
+      r[index] = 0x0;
 }
 
 
-void b64_encode(char *t, char *r)
+void b64_encode(char *t, char *r,  size_t l)
 {
-
-    int l = strlen(t);
     int base = 0;
+    int index = 0;
     short offset = 3 - (l % 3);
 
     for (int i = 0; i < l; i += 3)
@@ -81,15 +84,19 @@ void b64_encode(char *t, char *r)
             base = offset;
             while (a >= base)
             {
-                strncat(r, &b64_table[blocks >> (a * 6) & 0x3F], 1);
+                r[index] =  b64_table[blocks >> (a * 6) & 0x3F];
+                index++;
                 a--;
             }
 
             while (offset > 0)
             {
-                strcat(r, "=");
+                r[index] =  0x3D;
+                index++;
                 offset--;
             }
+
+             r[index] = 0x0;
         }
 
         else
@@ -97,7 +104,8 @@ void b64_encode(char *t, char *r)
             int c = 3;
             while (c >= 0)
             {
-                strncat(r, &b64_table[blocks >> (c * 6) & 0x3F], 1);
+                r[index] =  b64_table[blocks >> (c * 6) & 0x3F];
+                index++;
                 c--;
             }
         }
@@ -109,10 +117,15 @@ int main(int argc, char *argv[])
     if (argc == 2)
     {
         char *input = argv[1];
-        char *r = malloc(4 * ((strlen(input) + 2) / 3));
+        size_t l = strlen(input);
+        size_t al = (4 * (l / 3) + 1);
 
-        b64_encode(input, r);
-        printf("%s \n", r);
+        char r[al];
+        memset(r, 0, al);
+
+        b64_encode(input, r, l);
+        fwrite(r, al, 1, stdout);
+        printf("\n");
 
         return EXIT_SUCCESS;
     }
@@ -122,7 +135,14 @@ int main(int argc, char *argv[])
         if (!strcmp(argv[1], "-d"))
         {
             char *input = argv[2];
-            b64_decode(input);
+            size_t l = strlen(input);
+            size_t al = (3 * (l / 4) + 1);
+
+            char r[al];
+            memset(r, 0, al);
+            
+            b64_decode(input, r, l);
+            fwrite(r, al, 1, stdout);
             printf("\n");
             return EXIT_SUCCESS;
         }
