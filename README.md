@@ -1,21 +1,33 @@
 # base64
-Simple base64 encod and decode in C. Coded and tested on my ubuntu linux machine with following versions:
- - gcc version 11.2.0 (Ubuntu 11.2.0-7ubuntu2)
- - ubuntu 21.10 (Impish Indri)
+Small and simple base64 library programmed in C.
 
 ## Compile
+To compile the library, simply run the script 'build.sh'. Or directly in your bash:
 ```bash
- gcc b64.c -o b64 -Wall -O3 
+gcc base.c ./lib/b64.c -Wall -O3 -s -std=c99 -o base
 ```
 
-## Encode
+## Encodind with compiled bin
 ```bash
- ./b64 "base64 is sometimes weird to implement but it makes fun"
- YmFzZTY0IGlzIHNvbWV0aW1lcyB3ZWlyZCB0byBpbXBsZW1lbnQgYnV0IGl0IG1ha2VzIGZ1bg== 
+./base "base64 implementation makes fun"
+YmFzZTY0IGltcGxlbWVudGF0aW9uIG1ha2VzIGZ1bg==
 ```
 
-## Decode
+## Decoding with compiled bin
 ```bash
-./b64 -d YmFzZTY0IGlzIHNvbWV0aW1lcyB3ZWlyZCB0byBpbXBsZW1lbnQgYnV0IGl0IG1ha2VzIGZ1bg==
-base64 is sometimes weird to implement but it makes fun
+./base -d YmFzZTY0IGltcGxlbWVudGF0aW9uIG1ha2VzIGZ1bg==
+base64 implementation makes fun
+```
+
+## Usage in your C program
+If you only want to use the library, you can find a complete example in the base.c file.
+
+## Testing
+The test is written in python. Simple run the following commands for testing:
+```bash
+#decoding test
+python3 decoding_test.py
+
+#encoding test
+python3 encoding_test.py
 ```
