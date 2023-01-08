@@ -1,6 +1,10 @@
 # base64
 Small and simple base64 library programmed in C.
 
+## Benchmark
+
+Measured were (10000 * 250 ) encoding calls.
+
 ## Compile
 To compile the library, simply run the script 'build.sh'. Or directly in your bash:
 ```bash

@@ -1,3 +1,5 @@
+#!/usr/bin/python3
+
 import subprocess
 import base64
 import string
