@@ -5,6 +5,8 @@ Small and simple base64 library programmed in C.
 
 Measured were (10000 * 250 ) encoding calls.
 
+![Plot](https://github.com/AICDEV/base64/blob/master/benchmark.png)
+
 ## Compile
 To compile the library, simply run the script 'build.sh'. Or directly in your bash:
 ```bash
