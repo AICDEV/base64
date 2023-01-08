@@ -7,7 +7,7 @@
 #include <stdio.h>
 #include "b64.h"
 
-static const char b64_encoding_table[64] = {
+static const char b64_encoding_table[B_TABLE_SIZE] = {
     'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H',
     'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P',
     'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X',
@@ -20,7 +20,7 @@ static const char b64_encoding_table[64] = {
 
 unsigned short get_b64_table_index(char el) {
     unsigned short index = 0;
-    for(; index < 64; index++) {
+    for(; index < B_TABLE_SIZE; index++) {
         if(b64_encoding_table[index] == el) {
             break;
         }
@@ -52,7 +52,7 @@ b64_decoded_t* decode_base64(char *input) {
     }
 
     for(int i = 0, c = 0; i < input_l; i += 4) {
-        int block = 0;
+        unsigned int block = 0;
 
         for(int a = 0; a < 4; a++) {
             unsigned short test = get_b64_table_index(input[(i+a)]);
@@ -87,7 +87,7 @@ b64_encoded_t* encode_base_64(char *input) {
 
     for(int i = 0, c =0; i < (input_l); i+= 3) {
 
-        int block = 0;
+        unsigned int block = 0;
 
         for(int a = 0; a < 3; a++) {
             
