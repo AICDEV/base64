@@ -1,5 +1,5 @@
 # base64
-Small and simple base64 library programmed in C.
+Small and simple base64 library programmed in C. Currently ONLY tested and developt on little endian systems! Keep that in mind!
 
 ## Benchmark
 
